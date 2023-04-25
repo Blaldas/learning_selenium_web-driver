@@ -32,7 +32,7 @@ public class Utils {
         options.setExperimentalOption("prefs", prefs);
 
         //define localização do webdriver e inicializa webdriver
-        System.setProperty("webdriver.chrome.driver", "C:/Users/marcdomingues/Downloads/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
         return new ChromeDriver(options);
     }
 

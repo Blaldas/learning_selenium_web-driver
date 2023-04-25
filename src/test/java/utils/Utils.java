@@ -1,13 +1,16 @@
 package utils;
 
-import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -16,6 +19,17 @@ import java.util.*;
 
 
 public class Utils {
+
+    static WebDriver driver;
+    static WebDriverWait waitDriver;
+
+    private Utils() {
+    }
+
+    public Utils(WebDriver driver) {
+        this.driver = driver;
+        waitDriver = new WebDriverWait(driver, 30);
+    }
 
     public static WebDriver initWebDriver(){
         //Create a map to store  preferences
@@ -64,4 +78,55 @@ public class Utils {
         return wait;
     }
 
+    public static WebElement getElementByXpath(String xpath){
+        List<WebElement> elementsList = driver.findElements(By.xpath(xpath));
+        if(elementsList.size() == 0)
+            throwCustomError("NoSuchElement", "The element with the following xpath was not found:\n" + xpath);
+        return elementsList.get(0);
+    }
+
+    private static void throwCustomError(String errorName, String errorMessage) {
+        System.out.println(errorName.toUpperCase(Locale.ROOT));
+        System.out.println(errorMessage);
+        Exception e = new Exception();
+        e.printStackTrace();
+        quitWebDriver();
+        System.exit(1);
+    }
+
+    private static void quitWebDriver() {
+        driver.quit();
+    }
+
+    public static void clickByXpath(String xpath) {
+        WebElement element = getElementByXpath(xpath);
+
+        Actions actions = new Actions(driver);
+        try {
+            actions.click(element);
+            actions.perform();
+        }catch (Exception e){
+            throwCustomError("Element not clickable", "It was not possible to click on the element with the following xpath: " + xpath);
+        }
+    }
+
+    public static void goToWebsite(String website) {
+        driver.get(website);
+    }
+
+    public static void inputOnElement(String xpath, String input) {
+        WebElement element = getElementByXpath(xpath);
+
+        Actions actions = new Actions(driver);
+        try {
+            actions.sendKeys(element, input);
+            actions.perform();
+        }catch (Exception e){
+            throwCustomError("Element not clickable", "It was not possible to click on the element with the following xpath: " + xpath);
+        }
+    }
+
+    public static void waitForElement(String xpath){
+        waitDriver.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+    }
 }

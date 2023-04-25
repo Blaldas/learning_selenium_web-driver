@@ -9,6 +9,7 @@ import utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class Facebook {
 
     WebDriver driver;
-    FluentWait wait;    //The wait is used here in order to make the waiting process invisible outside this class
+    Utils utils;
 
 
     /**
@@ -27,16 +28,17 @@ public class Facebook {
     public Facebook(WebDriver driver) {
 
         this.driver = driver;
+        utils = new Utils(driver);
 
-        //indica site para entrar
-        driver.get("https://www.facebook.com/");
+        //goes to the website - to be improved
+        utils.goToWebsite("https://www.facebook.com/");
 
         //accepts terms
-        WebElement acTerms = driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div/div/div[3]/button[2]"));
-        acTerms.click();
+        Utils.clickByXpath("//button[@data-testid='cookie-policy-manage-dialog-accept-button']");
+
 
         //initiates the wait
-        wait = (FluentWait) Utils.initWait(driver);
+      //  wait = (FluentWait) Utils.initWait(driver);
     }
 
     /**
@@ -45,7 +47,7 @@ public class Facebook {
      *                        line 2: password
      * @return TRUE if successfully logged in, FALSE otherwise
      */
-    public boolean Login(String credentialsPath) {
+    public void login(String credentialsPath) {
         //gets pass and email
         List<String> creds = null;
         try {
@@ -55,29 +57,22 @@ public class Facebook {
             e.printStackTrace();
         }
         //introduces email and pass
-        WebElement name = driver.findElement(By.name("email"));
-        name.sendKeys(creds.get(0));
-
-        WebElement pass = driver.findElement(By.name("pass"));
-        pass.sendKeys(creds.get(1));
+        Utils.inputOnElement("//input[@name='email']", creds.get(0));
+        Utils.inputOnElement("//input[@name='pass']", creds.get(1));
 
         //clicks to login
-        WebElement btnEnter = driver.findElement(By.name("login"));
-        btnEnter.click();
+        Utils.clickByXpath("//button[@name='login']");
 
-        try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[3]/div/div/div[1]/div/div[2]/div/div[1]/div/div/div/div/span/div/div[2]/div/div[2]/div/div/div/span[2]/div/div")));
-        } catch (TimeoutException e) {
-            return false;
-        }
-        return true;
+        System.exit(0);
+        Utils.waitForElement("//div[@data-pagelet='TopOfHome']");
+
     }
 
-
+/*
     /**
      * @param seconds maximun time to some intem in the site to load
      *                This method is not necessary and should only be used in cases where the default timeout is not enought to let the site load
-     */
+
     public void changeWaitTimeOut(int seconds) {
         wait.withTimeout(Duration.ofSeconds(seconds));
     }
@@ -93,13 +88,13 @@ public class Facebook {
      * @return TRUE if no errors occurred, FALSE otherwise
      * <p>
      * This method is used to send some message to a friend using the facebook chat
-     */
+     *
     public boolean sendMessage2Friend(String friendName, String msg) {
 
         try {
             //searches for friend
-            WebElement btnSearch = driver.findElement(By.xpath("/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[3]/div/div/div[1]/div/div[2]/div/div[1]/div/div/div/div/span/div/div[2]/div/div[2]/div/div/div/span[2]/div/div"));
-            btnSearch.click();
+        //    WebElement btnSearch = driver.findElement(By.xpath("/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[3]/div/div/div[1]/div/div[2]/div/div[1]/div/div/div/div/span/div/div[2]/div/div[2]/div/div/div/span[2]/div/div"));
+         //   btnSearch.click();
 
 
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[1]/div/div[1]/div/div[5]/div/div[1]/div[1]/div[1]/div/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[1]/input")));
@@ -123,5 +118,5 @@ public class Facebook {
         }
         return true;
     }
-
+*/
 }

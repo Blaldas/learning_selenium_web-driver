@@ -18,14 +18,14 @@ public class Main {
 
 
         Facebook facebookPage = new Facebook(driver);
-        facebookPage.changeWaitPolling(1000);
-        facebookPage.changeWaitTimeOut(10);
+      //  facebookPage.changeWaitPolling(1000);
+     //   facebookPage.changeWaitTimeOut(10);
 
-        facebookPage.Login("src/credentials");
-        System.out.println("Login done successfully");
+          facebookPage.login("src/credentials");
+  //      System.out.println("Login done successfully");
         while(true) {
-            facebookPage.sendMessage2Friend("rita", "xrftgy");
-            System.out.println("Message sent successfully");
+     //       facebookPage.sendMessage2Friend("rita", "teste de selinium");
+     //       System.out.println("Message sent successfully");
         }
 
         //Youtube youtubePage = new Youtube(driver);

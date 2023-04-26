@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import javax.swing.*;
 import java.io.File;
@@ -22,6 +23,7 @@ public class Utils {
 
     static WebDriver driver;
     static WebDriverWait waitDriver;
+
 
     private Utils() {
     }
@@ -81,18 +83,11 @@ public class Utils {
     public static WebElement getElementByXpath(String xpath){
         List<WebElement> elementsList = driver.findElements(By.xpath(xpath));
         if(elementsList.size() == 0)
-            throwCustomError("NoSuchElement", "The element with the following xpath was not found:\n" + xpath);
+            Assert.fail("The element with the following xpath was not found:\n" + xpath);
         return elementsList.get(0);
     }
 
-    private static void throwCustomError(String errorName, String errorMessage) {
-        System.out.println(errorName.toUpperCase(Locale.ROOT));
-        System.out.println(errorMessage);
-        Exception e = new Exception();
-        e.printStackTrace();
-        quitWebDriver();
-        System.exit(1);
-    }
+
 
     private static void quitWebDriver() {
         driver.quit();
@@ -106,7 +101,7 @@ public class Utils {
             actions.click(element);
             actions.perform();
         }catch (Exception e){
-            throwCustomError("Element not clickable", "It was not possible to click on the element with the following xpath: " + xpath);
+            Assert.fail("It was not possible to click on the element with the following xpath: " + xpath);
         }
     }
 
@@ -122,7 +117,7 @@ public class Utils {
             actions.sendKeys(element, input);
             actions.perform();
         }catch (Exception e){
-            throwCustomError("Element not clickable", "It was not possible to click on the element with the following xpath: " + xpath);
+            Assert.fail("It was not possible to write input on the element with the following xpath: " + xpath);
         }
     }
 

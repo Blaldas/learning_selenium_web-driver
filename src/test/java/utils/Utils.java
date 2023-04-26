@@ -24,6 +24,9 @@ public class Utils {
     static WebDriver driver;
     static WebDriverWait waitDriver;
 
+    //wait for getElement
+    private static int defaultWait = 3;
+
 
     private Utils() {
     }
@@ -33,7 +36,7 @@ public class Utils {
         waitDriver = new WebDriverWait(driver, 30);
     }
 
-    public static WebDriver initWebDriver(){
+    public static WebDriver initWebDriver() {
         //Create a map to store  preferences
         Map<String, Object> prefs = new HashMap<String, Object>();
 
@@ -66,27 +69,19 @@ public class Utils {
         return credList;
     }
 
-    /**
-     * Used to initialize the wait.
-     * The wait is private and has limmited acess.
-     * The wait is used here in order to make the waiting process invisible outside this class
-     */
-    public static Wait initWait(WebDriver driver){
-        FluentWait wait = new FluentWait(driver);
-        wait.withTimeout(Duration.ofSeconds(10));
-        wait.pollingEvery(Duration.ofMillis(250));
-        wait.ignoring(NoSuchElementException.class);
 
-        return wait;
-    }
-
-    public static WebElement getElementByXpath(String xpath){
+    public static WebElement getElementByXpath(String xpath) {
         List<WebElement> elementsList = driver.findElements(By.xpath(xpath));
-        if(elementsList.size() == 0)
-            Assert.fail("The element with the following xpath was not found:\n" + xpath);
+        if (elementsList.size() == 0) {
+            waitForElement(xpath);
+            elementsList = driver.findElements(By.xpath(xpath));
+            System.out.println("fail");
+            if (elementsList.size() == 0) {
+                Assert.fail("The element with the following xpath was not found:\n" + xpath);
+            }
+        }
         return elementsList.get(0);
     }
-
 
 
     private static void quitWebDriver() {
@@ -100,7 +95,7 @@ public class Utils {
         try {
             actions.click(element);
             actions.perform();
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.fail("It was not possible to click on the element with the following xpath: " + xpath);
         }
     }
@@ -116,12 +111,24 @@ public class Utils {
         try {
             actions.sendKeys(element, input);
             actions.perform();
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.fail("It was not possible to write input on the element with the following xpath: " + xpath);
         }
     }
 
-    public static void waitForElement(String xpath){
+    public static void waitForElement(String xpath) {
         waitDriver.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+    }
+
+    public static void waitXSeconds(int seconds) {
+        waitXMiliseconds(seconds * 1000);
+    }
+
+    public static void waitXMiliseconds(int mil) {
+        try {
+            Thread.sleep(mil);
+        } catch (InterruptedException e) {
+            Assert.fail(e.getMessage());
+        }
     }
 }

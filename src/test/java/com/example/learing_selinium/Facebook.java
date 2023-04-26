@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import utils.Utils;
 
+import javax.rmi.CORBA.Util;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.util.Arrays;
@@ -38,14 +39,13 @@ public class Facebook {
 
 
         //initiates the wait
-      //  wait = (FluentWait) Utils.initWait(driver);
+        //  wait = (FluentWait) Utils.initWait(driver);
     }
 
     /**
      * @param credentialsPath path to file composed by:
      *                        line 1: email
      *                        line 2: password
-     * @return TRUE if successfully logged in, FALSE otherwise
      */
     public void login(String credentialsPath) {
         //gets pass and email
@@ -63,9 +63,19 @@ public class Facebook {
         //clicks to login
         Utils.clickByXpath("//button[@name='login']");
 
-        System.exit(0);
         Utils.waitForElement("//div[@data-pagelet='TopOfHome']");
 
+    }
+
+    public void openFriendChat(String friendName) {
+        Utils.clickByXpath("//i[@data-visualcompletion='css-img' and contains(@style, 'background-position: 0px -699px;')]/parent::div");
+        Utils.inputOnElement("//div/input[@type='search']", friendName);
+        Utils.waitXSeconds(1);
+        Utils.clickByXpath("//div/span/span/span[contains(.,'" + friendName + "')]");
+    }
+
+    public void sendChatMsg(String msg) {
+        Utils.inputOnElement("//div[@style='user-select: text; white-space: pre-wrap; word-break: break-word;']", msg + Keys.RETURN);
     }
 
 /*
